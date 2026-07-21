@@ -1,7 +1,14 @@
 import axios, { AxiosError } from 'axios';
 import { useAuthStore } from '../store/auth-store';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://34.207.231.235/api/v1';
+// In the browser, use a relative path so requests go through the Next.js rewrite
+// proxy (Vercel server → backend HTTP). This avoids Mixed Content errors on HTTPS.
+// In SSR / local dev without the proxy, fall back to the env var.
+const isBrowser = typeof window !== 'undefined';
+const API_BASE_URL = isBrowser
+  ? '/api/v1'
+  : (process.env.NEXT_PUBLIC_API_URL || 'http://34.207.231.235/api/v1');
+
 
 export const apiClient = axios.create({
   baseURL: API_BASE_URL,
